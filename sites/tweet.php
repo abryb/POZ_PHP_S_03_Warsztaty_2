@@ -1,24 +1,25 @@
 <?php
 require_once('../autoloader.php');
+
 session_start();
+$client = null;
+$tweet = null;        
+
 if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
-    $user = user::loadById($_SESSION['id']);
-} else {
-    echo "Musisz być zalogowany żeby tu być";
-    header('Refresh: 4; url= ../index.php');
-}
+    $client = user::loadById($_SESSION['id']);
+} 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET)) {
         $tweet = tweet::loadById($_GET['id']);        
         if ($tweet) {
-            $_SESSION['tweetPostId'] = $_GET['id'];
+            $_SESSION['tweetPostId'] = $_GET['id']; // jak wyślemy post to nie pójdzie get, więc zapisuje w session
         }        
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($_SESSION['tweetPostId'] && $user) {
+    if ($_SESSION['tweetPostId'] && $client) {
         $tweet = tweet::loadById($_SESSION['tweetPostId']);
         if (!empty($_POST['comment'])){
             $comment = new comment();
@@ -67,9 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </nav>
-    
-<div class="container">
-</div>
 
 <div class="container">
 
@@ -96,23 +94,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<table class='comments'><tr><td> " . $author->getUsername() . " </td><td> " . $author->getEmail() .
                     " </td><td> " . $comment->getCreationDate() . " </td></tr><tr><td colspan='3'> " . 
                     $comment ->getText() . " </td></tr></table>"; 
-        }
-
-
-        ?>
+        }   
+    }
+    ?>
         </div>
     </div>
     <div class="col-sm-4">
+        <?php if ($client) {?>
         <form action="" method="post" role="form" >
                 <label for="comment">Comment:</label>
                 <input type="text" class="form-control" name="comment" id="comment"
                        placeholder="Write comment">                  
             <button type="submit" class="btn btn-success">Send</button>
         </form>
+        <?php } ?>
     </div>
-    <?php } ?>
   </div>
 </div>
 
 </body>
 </html>
+    
+            
+        

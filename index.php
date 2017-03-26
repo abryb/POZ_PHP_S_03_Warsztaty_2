@@ -16,14 +16,13 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <title>Bootstrap Example</title>
+      <title>Tweeter Main Page</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       <link rel="stylesheet" href="css/style.css" type="text/css">
-
 </head>
 <body>
     
@@ -74,10 +73,30 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
 
 <?php if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
 ?>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2">
+                
+            </div>
+            <div class="col-sm-6 ">
+                <form action="" method="post" role="form" >
+                    <label for="tweet">Tweet:</label>
+                    <input type="text" class="form-control" name="tweet" id="tweet"
+                       placeholder="Write tweet">                  
+                    <button type="submit" class="btn btn-success">Send</button>
+                    </form>
+            </div>
+            <div class="col-sm-4">
+                
+            </div>
+        </div>
+    </div>    
+<?php }
+?>    
 <div class="container">
 
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-4">
 
     </div>
     <div class="col-sm-6 ">
@@ -85,26 +104,19 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
         $allTweets = tweet::loadAll();
         foreach ($allTweets as $tweet) {
             $user = user::loadById($tweet->getUserId());
-            echo "<a href=sites/tweetPost.php?id=" . $tweet->getId() . ">";
-            echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
-                    " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr id='text'><td colspan='3'>" . 
-                    $tweet ->getText() . " </td></tr></table>";    
-            echo "</a>";
+            echo "<table><tr><td><a href='sites/profile.php?id=". $user->getId()
+                    . "'>" . $user->getUsername() . "</a></td><td> " . $user->getEmail() .
+                    " </td><td> " . $tweet->getCreationDate() . " </td></tr>";
+            echo "<tr><td colspan='3'>" . "<a href=sites/tweet.php?id=" . 
+                 $tweet->getId() . ">" . $tweet ->getText() . "</a></td></tr></table>";   
         }
         ?>        
     </div>
     <div class="col-sm-4">
-        <form action="" method="post" role="form" >
-                <label for="tweet">Tweet:</label>
-                <input type="text" class="form-control" name="tweet" id="tweet"
-                       placeholder="Write tweet">                  
-            <button type="submit" class="btn btn-success">Send</button>
-        </form>
+
     </div>
   </div>
 </div>
-<?php }
-?>
 
 </body>
 </html>

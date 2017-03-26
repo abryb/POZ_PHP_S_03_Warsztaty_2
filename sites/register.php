@@ -1,7 +1,13 @@
 <?php
 require_once('../autoloader.php');
+
 session_start();
-$outcome = null; // Do wyświetlenia
+
+$outcome = '';
+
+if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
+    header('Refresh: ; url= prifile.php');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['email']) && !empty($_POST['username']) && !empty($_POST['password'])) {
@@ -17,72 +23,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $obj1->setpasswordHash($_POST['password']);
                 $obj1->save();
                 $outcome =  "Rejestracja się powiodła!<br>";
+                header('Refresh: 2; url=login.php');
             }
         }
     } else {
         $outcome = "Nie podałeś wszystkich informacji";
     }
 }
-
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"<?php
-?>
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>login</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" media="screen" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+      <title>Tweeter Register </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <h1>Welcome to Tweeter: new, better Twitter made in Poland</h1>
-            </div>
-        </div>
-    </div>
     
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                <form action="" method="post" role="form" >
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="text" class="form-control" name="email" id="email"
-                               placeholder="Your email">
-                        <label for="username">Username:</label>
-                        <input type="text" class="form-control" name="username" id="username"
-                               placeholder="Your username">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" name="password" id="password"
-                               placeholder="">                    
-                    </div>
-                    <button type="submit" class="btn btn-success">REGISTER</button>
-                </form>
-                <?php echo $outcome ?>
-            </div>
-            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-            </div>
-        </div>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="../index.php">Tweeter</a>
     </div>
-    <div class="container">
-    <div class="row">
-        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-            <a href="../index.php"><button type="" class="btn btn-success">To Main Page</button></a>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-        </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+          <li class="active"><a href="profile.php">Profile</a></li>
+        <li><a href="#"></a></li>
+        <li><a href="#"></a></li>
+        <li><a href="#"></a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          <li><a href="register.php"><span class="glyphicon glyphicon-log-in"></span> Register</a></li>
+          <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+      </ul>
     </div>
+  </div>
+</nav>
+    
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-4 ">
+        <form action="" method="post" role="form" >
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" class="form-control" name="email" id="email"
+                       placeholder="Your email">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" id="username"
+                       placeholder="Your username">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" name="password" id="password"
+                       placeholder="">                    
+            </div>
+            <button type="submit" class="btn btn-success">REGISTER</button>
+        </form>
+        <?php echo $outcome ?>
+    </div>
+    <div class="col-sm-4">
+    </div>
+  </div>
 </div>
+
 </body>
 </html>
