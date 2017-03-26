@@ -2,22 +2,29 @@
 require_once('../autoloader.php');
 
 session_start();
-$userId= null;
-$client=null;
+
+$editToolbar = false;
 
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
     $client = user::loadById($_SESSION['id']);
-    $clientId = $client->getId();
 }
 
-
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (!empty($_GET['id'])) {
-        $user = user::loadById($_GET['id']);
-        $userId= $user->getId();
+// Prosta zmiana danych
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
+    if (!empty($_POST['email'])) {
+        $client->setEmail($_POST['email']);
+    } 
+    if (!empty($_POST['username'])) {
+        $client->setUsername($_POST['username']);
     }
+    if (!empty($_POST['password'])) {
+        $client->setPasswordHash($_POST['password']);
+    }
+    $client->save();
+    $_SESSION['email'] = $client->getEmail();
+    $_SESSION['id'] = $client->getId();
+    $_SESSION['username'] = $client->getUsername();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <?php } ?>
         <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
         <li><a href="messages.php"><span class="glyphicon glyphicon-log-in"></span> Messages</a></li>
-        <li><a href="settings.php"><span class="glyphicon glyphicon-log-in"></span> Settings</a></li>
       </ul>
     </div>
   </div>
@@ -66,30 +72,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <div class="col-sm-2">
     </div>
     <div class="col-sm-6 ">
-        <?php
-        if (!empty($user)) {
-            echo "<h3>Użytkownik " . $user->getUsername() . "</h3>";
-            $allTweets = tweet::loadAllByUserId($user->getId());
-            foreach ($allTweets as $tweet) {
-                echo "<a href=tweet.php?id=" . $tweet->getId() . ">";
-                echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
-                        " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr><td colspan='3'> " . 
-                        $tweet ->getText() . " </td></tr></table>"; 
-                echo "</a>";
-            }
-        }
-        ?>        
+                
     </div>
     <div class="col-sm-4">
-        <?php if ($userId != $clientId && $userId != null) { ?>
-        <form action="../index.php" method="post" role="form" >
-                <label for="tweet">Napisz wiadomość</label>
-                <input type="text" class="form-control" name="tweet" id="tweet"
-                       placeholder="Write tweet">                  
-            <button type="submit" class="btn btn-success">Send</button>
+        
+        <h3>Formularz zmiany danych</h3>
+        <form action="" method="post" role="form" >
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" class="form-control" name="email" id="email"
+                       placeholder="Your email">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" name="username" id="username"
+                       placeholder="Your username">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" name="password" id="password"
+                       placeholder="">                    
+            </div>
+            <button type="submit" class="btn btn-success">REGISTER</button>
         </form>
-        <?php }?>
-
     </div>
   </div>
 </div>

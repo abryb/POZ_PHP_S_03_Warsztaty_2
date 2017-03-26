@@ -52,6 +52,8 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
           <?php }else{ 
           ?>
           <li><a href="sites/logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+          <li><a href="sites/messages.php"><span class="glyphicon glyphicon-log-in"></span> Messages</a></li>
+          <li><a href="sites/settings.php"><span class="glyphicon glyphicon-log-in"></span> Settings</a></li>
           <?php } 
           ?>
       </ul>
