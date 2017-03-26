@@ -31,8 +31,11 @@ class user extends activeRecord {
         $this->email = $email;}
 
     public function setPasswordHash($passwordHash){
-        $this->passwordHash = md5($passwordHash);}
-        
+        $options = [
+            'cost' => 11
+            ];
+        $this->passwordHash = password_hash($passwordHash, PASSWORD_BCRYPT, $options);
+    }        
     public function save(){
         self::connect();
         if (self::$db->conn != null) {
@@ -77,7 +80,7 @@ class user extends activeRecord {
         $result = $stmt->execute([ 'id' => $id ]);
         if ($result && $stmt->rowCount() >= 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $loadedUser = new User();
+            $loadedUser = new user();
             $loadedUser->id = $row['id'];
             $loadedUser->username = $row['username'];
             $loadedUser->passwordHash = $row['passwordHash'];
@@ -117,4 +120,22 @@ class user extends activeRecord {
         }
         return true;
     }
+    
+    static public function loadByEmail($email){
+        self::connect();
+        $sql = "SELECT * FROM users WHERE email=:email";
+        $stmt = self::$db->conn->prepare($sql);
+        $result = $stmt->execute([ 'email' => $email ]);
+        if ($result && $stmt->rowCount() == 1) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $loadedUser = new user();
+            $loadedUser->id = $row['id'];
+            $loadedUser->username = $row['username'];
+            $loadedUser->passwordHash = $row['passwordHash'];
+            $loadedUser->email = $row['email'];
+            return $loadedUser;
+        }
+        return null;
+    }
+    
 }
