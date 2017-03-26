@@ -1,14 +1,26 @@
 <?php
 require_once('../autoloader.php');
 session_start();
+$outcome = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['email']) && !empty($_POST['username']) && !empty($_POST['password'])) {
-        $obj1 = new user();
-        $obj1->setUsername($_POST['username']);
-        $obj1->setEmail($_POST['email']);
-        $obj1->setpasswordHash($_POST['password']);
-        $obj1->save();
+        if (user::loadByEmail($_POST['email'])) {
+            $outcome =  "Podany email jest już zajęty";
+        }else {
+            if (user::loadByUsername($_POST['username'])) {
+                $outcome =  "Podana nazwa użytkownika jest już zajęta";
+            } else {
+                $obj1 = new user();
+                $obj1->setUsername($_POST['username']);
+                $obj1->setEmail($_POST['email']);
+                $obj1->setpasswordHash($_POST['password']);
+                $obj1->save();
+                $outcome =  "Rejestracja się powiodła!<br>";
+            }
+        }
+    } else {
+        $outcome = "Nie podałeś wszystkich informacji";
     }
 }
 
@@ -53,11 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <button type="submit" class="btn btn-success">REGISTER</button>
                 </form>
+                <?php echo $outcome ?>
             </div>
             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 
             </div>
         </div>
     </div>
+    <div class="container">
+    <div class="row">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+            <a href="../index.php"><button type="" class="btn btn-success">To Main Page</button></a>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        </div>
+    </div>
+</div>
 </body>
 </html>

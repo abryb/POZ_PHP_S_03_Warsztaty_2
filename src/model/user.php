@@ -137,5 +137,20 @@ class user extends activeRecord {
         }
         return null;
     }
-    
+    static public function loadByUsername($username){
+        self::connect();
+        $sql = "SELECT * FROM users WHERE username=:username";
+        $stmt = self::$db->conn->prepare($sql);
+        $result = $stmt->execute([ 'username' => $username ]);
+        if ($result && $stmt->rowCount() == 1) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $loadedUser = new user();
+            $loadedUser->id = $row['id'];
+            $loadedUser->username = $row['username'];
+            $loadedUser->passwordHash = $row['passwordHash'];
+            $loadedUser->email = $row['email'];
+            return $loadedUser;
+        }
+        return null;
+    }    
 }
