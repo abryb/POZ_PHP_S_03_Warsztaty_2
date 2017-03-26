@@ -15,7 +15,7 @@
 
 class message extends activeRecord {
     
-    private $sendreId;
+    private $senderId;
     private $receiverId;
     private $text;
     private $creationDate;
@@ -25,7 +25,7 @@ class message extends activeRecord {
         return $this->id;}   
     
     public function getSenderId() {
-        return $this->sendreId;}
+        return $this->senderId;}
         
     public function getReceiverId() {
         return $this->receiverId;}    
@@ -40,7 +40,7 @@ class message extends activeRecord {
         return $this->read;}    
     
     public function setSenderId($senderId) {
-        $this->sendreId = $senderId;}
+        $this->senderId = $senderId;}
         
     public function setReceiverId($receiverId) {
         $this->receiverId = $receiverId;}    
@@ -57,7 +57,7 @@ class message extends activeRecord {
     public function __construct() {
         parent::__construct();
         $this->id = -1;
-        $this->sendreId = null;
+        $this->senderId = null;
         $this->receiverId = null;
         $this->text = '';
         $this->creationDate = null;
@@ -68,15 +68,13 @@ class message extends activeRecord {
         self::connect();
         if (self::$db->conn != null) {
             if ($this->id == -1) {
-                $sql = "INSERT INTO messages (senderId, receiverid, text, creationDate,"
-                        . " read) values (:senderId, :receiverId, :text, :creationDate :read)";
+                $sql = "INSERT INTO messages(senderId, receiverId, text, creationDate) values(:senderId, :receiverId, :text, :creationDate)";
                 $stmt = self::$db->conn->prepare($sql);
                 $result = $stmt->execute([
                     'senderId' => $this->senderId,
-                    'receiverid' => $this->receiverid,
+                    'receiverId' => $this->receiverId,
                     'text' => $this->text,
                     'creationDate' => $this->creationDate,
-                    'read' => $this->read,
                 ]);
 
                 if ($result == true) {
@@ -86,15 +84,13 @@ class message extends activeRecord {
                     echo self::$db->conn->error;
                 }
             } else {
-                $sql = "UPDATE messages SET senderId = :senderId, receiverId= :receiverId"
-                        . " text = :text, creationDate = :creationDate read=:read WHERE id = :id";
+                $sql = "UPDATE messages SET senderId=:senderId, receiverId=:receiverId, text=:text, creationDate=:creationDate";
                 $stmt = self::$db->conn->prepare($sql);
                 $result = $stmt->execute([
                     'senderId' => $this->senderId,
-                    'receiverid' => $this->receiverid,
+                    'receiverId' => $this->receiverId,
                     'text' => $this->text,
                     'creationDate' => $this->creationDate,
-                    'read' => $this->read,
                 ]);
 
                 if ($result == true) {
@@ -148,7 +144,7 @@ class message extends activeRecord {
     
     public static function loadAllByUserId($id, $sr = 0) {
         self::connect();
-        if ($sr = 0 ) {
+        if ($sr == 0 ) {
             $sql = "SELECT * FROM messages WHERE senderId=:id ORDER BY creationDate DESC";
         }else {
             $sql = "SELECT * FROM messages WHERE receiverId=:id ORDER BY creationDate DESC";
@@ -158,14 +154,14 @@ class message extends activeRecord {
         $returnTable = [];
         if ($result !== false && $stmt->rowCount() > 0) {
             foreach ($stmt as $row){
-                $loadedMessage = new messages();
+                $loadedMessage = new message();
                 $loadedMessage->id = $row['id'];
                 $loadedMessage->senderId = $row['senderId'];
-                $loadedMessage->receiverid = $row['receiverid'];
+                $loadedMessage->receiverId = $row['receiverId'];
                 $loadedMessage->text = $row['text'];
                 $loadedMessage->creationDate = $row['creationDate'];
                 $loadedMessage->read = $row['read'];
-                $returnTable[] = $loadedTweet;
+                $returnTable[] = $loadedMessage;
             }
         }
         return $returnTable;

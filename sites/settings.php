@@ -7,6 +7,9 @@ $editToolbar = false;
 
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
     $client = user::loadById($_SESSION['id']);
+} else {
+    header('Refresh: 0; url= ../index.php');
+    exit;
 }
 
 // Prosta zmiana danych
@@ -76,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
     </div>
     <div class="col-sm-4">
         
+        <?php if ($client) { 
+        ?>
         <h3>Formularz zmiany danych</h3>
         <form action="" method="post" role="form" >
             <div class="form-group">
@@ -91,6 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
             </div>
             <button type="submit" class="btn btn-success">REGISTER</button>
         </form>
+        <?php } 
+        ?>
     </div>
   </div>
 </div>

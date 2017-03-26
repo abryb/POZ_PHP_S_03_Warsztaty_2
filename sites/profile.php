@@ -15,9 +15,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET['id'])) {
         $user = user::loadById($_GET['id']);
         $userId= $user->getId();
+        $_SESSION['receiverId'] = $userId;
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['message'])) {
+         $message = new message();
+         $message->setReceiverId($client->getId());
+         $message->setSenderId($_SESSION['receiverId']);
+         $message->setText($_POST['message']);
+         $result = $message->save();
+         if ($result == true) {
+             $_SESSION['send'] = true;
+             header("Refresh:0 url=messages.php");
+         }
+    }    
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <li><a href="#"></a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <?php if (isset($_SESSION['email'])) { ?>
+        <?php if ($client) { ?>
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span><?php echo $client->getUsername(); ?></a></li>
         <?php } ?>
         <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
@@ -81,14 +95,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         ?>        
     </div>
     <div class="col-sm-4">
-        <?php if ($userId != $clientId && $userId != null) { ?>
-        <form action="../index.php" method="post" role="form" >
-                <label for="tweet">Napisz wiadomość</label>
-                <input type="text" class="form-control" name="tweet" id="tweet"
-                       placeholder="Write tweet">                  
+        <?php 
+        if ($userId != $clientId && $userId != null) { 
+        ?>
+        <form action="" method="post" role="form" >
+                <label for="message">Napisz wiadomość</label>
+                <input type="text" class="form-control" name="message" id="message"
+                       placeholder="Write message">                  
             <button type="submit" class="btn btn-success">Send</button>
         </form>
-        <?php }?>
+        <?php }
+        ?>
 
     </div>
   </div>
