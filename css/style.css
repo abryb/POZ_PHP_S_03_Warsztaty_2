@@ -1,0 +1,12 @@
+tr, td {
+    border: 1px solid grey;
+    font-weight: 700;
+}
+
+
+table {
+    width: 80%;
+    margin: 10px;
+    
+}
+

@@ -1,7 +1,7 @@
 <?php
 require_once('../autoloader.php');
 session_start();
-$outcome = null;
+$outcome = null; // Do wyświetlenia
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['email']) && !empty($_POST['username']) && !empty($_POST['password'])) {

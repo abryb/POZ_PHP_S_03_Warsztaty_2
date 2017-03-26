@@ -91,19 +91,19 @@ class tweet extends activeRecord {
         $result = $stmt->execute([ 'id' => $id ]);
         if ($result && $stmt->rowCount() >= 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $loadedUser = new tweet ();
-            $loadedUser->id = $row['id'];
-            $loadedUser->userId = $row['userId'];
-            $loadedUser->text = $row['text'];
-            $loadedUser->creationDate = $row['creationDate'];
-            return $loadedUser;
+            $loadedTweet = new tweet ();
+            $loadedTweet->id = $row['id'];
+            $loadedTweet->userId = $row['userId'];
+            $loadedTweet->text = $row['text'];
+            $loadedTweet->creationDate = $row['creationDate'];
+            return $loadedTweet;
         }
         return null;
     } 
     
     static public function loadAll(){
         self::connect();
-        $sql = "SELECT * FROM tweets";
+        $sql = "SELECT * FROM tweets ORDER BY creationDate DESC";
         $result = self::$db->conn->query($sql);
         $returnTable = [];
         if ($result !== false && $result->rowCount() > 0) {
@@ -119,14 +119,14 @@ class tweet extends activeRecord {
         return $returnTable;
     }
     
-    public static function loadAllByUserId() {
+    public static function loadAllByUserId($id) {
         self::connect();
-        $sql = "SELECT * FROM tweets WHERE userId=:id";
+        $sql = "SELECT * FROM tweets WHERE userId=:id ORDER BY creationDate DESC";
         $stmt = self::$db->conn->prepare($sql);
         $result = $stmt->execute([ 'id' => $id ]);
         $returnTable = [];
-        if ($result !== false && $result->rowCount() > 0) {
-            foreach ($result as $row){
+        if ($result !== false && $stmt->rowCount() > 0) {
+            foreach ($stmt as $row){
                 $loadedTweet = new tweet();
                 $loadedTweet->id = $row['id'];
                 $loadedTweet->userId = $row['userId'];

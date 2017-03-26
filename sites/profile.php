@@ -1,29 +1,24 @@
 <?php
-require_once('./autoloader.php');
+require_once('../autoloader.php');
 session_start();
-if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!empty($_POST['tweet'])){
-            $tweet = new tweet();
-            $tweet->setText($_POST['tweet']);
-            $tweet->setUserId($_SESSION['id']);
-            $tweet->save();
-        }
-    }
+if (empty($_SESSION['email']) || empty($_SESSION['id'])) {
+    header('Refresh: 0; url= ../index.php');
+} else {
+    $user = user::loadById($_SESSION['id']);
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
       <title>Bootstrap Example</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="../css/style.css" type="text/css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-      <link rel="stylesheet" href="css/style.css" type="text/css">
-
 </head>
 <body>
     
@@ -35,45 +30,25 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="#">Tweeter</a>
+        <a class="navbar-brand" href="../index.php">Tweeter</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-          <li class="active"><a href="sites/profile.php">Profile</a></li>
+        <li class="active"><a href="#">Home</a></li>
         <li><a href="#"></a></li>
         <li><a href="#"></a></li>
         <li><a href="#"></a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-          <?php 
-          if (!isset($_SESSION['email'])) {
-          ?>
-          <li><a href="sites/login.php"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-          <li><a href="sites/register.php"><span class="glyphicon glyphicon-log-in"></span> Register</a></li>
-          <?php }else{ 
-          ?>
-          <li><a href="sites/logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-          <?php } 
-          ?>
+        <li><a href="sites/logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
     </div>
   </div>
 </nav>
     
 <div class="container">
-    <?php
-    if (!isset($_SESSION['email'])) {
-    ?>
-    <h1>Nie jesteś zalogowany, zaloguj się lub stwórz konto</h1>
-    <?php }else{
-    ?>
-    <h1>Jesteś zalogowany</h1>
-    <?php }
-    ?>
 </div>
 
-<?php if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
-?>
 <div class="container">
 
   <div class="row">
@@ -82,19 +57,18 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
     </div>
     <div class="col-sm-6 ">
         <?php 
-        $allTweets = tweet::loadAll();
+        $allTweets = tweet::loadAllByUserId($_SESSION['id']);
         foreach ($allTweets as $tweet) {
-            $user = user::loadById($tweet->getUserId());
-            echo "<a href=sites/tweet.php?id=" . $tweet->getId() . ">";
+            echo "<a href=tweet.php?id=" . $tweet->getId() . ">";
             echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
-                    " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr id='text'><td colspan='3'>" . 
-                    $tweet ->getText() . " </td></tr></table>";    
+                    " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr><td colspan='3'> " . 
+                    $tweet ->getText() . " </td></tr></table>"; 
             echo "</a>";
         }
         ?>        
     </div>
     <div class="col-sm-4">
-        <form action="" method="post" role="form" >
+        <form action="../index.php" method="post" role="form" >
                 <label for="tweet">Tweet:</label>
                 <input type="text" class="form-control" name="tweet" id="tweet"
                        placeholder="Write tweet">                  
@@ -103,8 +77,6 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
     </div>
   </div>
 </div>
-<?php }
-?>
 
 </body>
 </html>

@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         if ($passwordVerify === true) {
             $_SESSION['email'] = $obj->getEmail();
+            $_SESSION['id'] = $obj->getId();
         }  
     }
 }
