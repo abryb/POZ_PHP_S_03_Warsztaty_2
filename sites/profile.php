@@ -3,6 +3,7 @@ require_once('../autoloader.php');
 session_start();
 if (empty($_SESSION['email']) || empty($_SESSION['id'])) {
     header('Refresh: 0; url= ../index.php');
+    exit;
 } else {
     $user = user::loadById($_SESSION['id']);
 }
@@ -35,12 +36,13 @@ if (empty($_SESSION['email']) || empty($_SESSION['id'])) {
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Home</a></li>
+        <li class="active"><a href="#">Profile</a></li>
         <li><a href="#"></a></li>
         <li><a href="#"></a></li>
         <li><a href="#"></a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="sites/logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
     </div>
   </div>
@@ -59,7 +61,7 @@ if (empty($_SESSION['email']) || empty($_SESSION['id'])) {
         <?php 
         $allTweets = tweet::loadAllByUserId($_SESSION['id']);
         foreach ($allTweets as $tweet) {
-            echo "<a href=tweet.php?id=" . $tweet->getId() . ">";
+            echo "<a href=tweetPost.php?id=" . $tweet->getId() . ">";
             echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
                     " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr><td colspan='3'> " . 
                     $tweet ->getText() . " </td></tr></table>"; 

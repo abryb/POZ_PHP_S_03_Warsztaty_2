@@ -1,17 +1,24 @@
 <?php
 require_once('../autoloader.php');
 session_start();
-
+$outcome = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['email']) && !empty($_POST['password'])) {
+        $passwordVerify = false;
         $obj = user::loadByEmail($_POST['email']);
         if ($obj) {
             $passwordVerify = password_verify($_POST['password'], $obj->getPasswordHash());
+            if ($passwordVerify === true) {
+                $_SESSION['email'] = $obj->getEmail();
+                $_SESSION['id'] = $obj->getId();
+            } else {
+                $outcome = "Podałeś niepoprawne hasło";
+            }
+        } else {
+            $outcome = "Nie ma takiego użytkownika";
         }
-        if ($passwordVerify === true) {
-            $_SESSION['email'] = $obj->getEmail();
-            $_SESSION['id'] = $obj->getId();
-        }  
+    } else {
+        $outcome = "Nie podałeś danych do logowania";
     }
 }
 ?>
@@ -35,8 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
             <?php 
             if (!empty($_SESSION['email'])) {
-                echo "<h1>Jesteś już zalogowany</h1>";
-                header('Refresh: 2; url= ../index.php');
+                header('Refresh: 1; url= ../index.php');
             } else {
             ?>
             <form action="" method="post" role="form">
@@ -49,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            placeholder="">                    
                 </div>
                 <button type="submit" class="btn btn-success">LOG IN</button>
+                <?php echo $outcome ?>
             </form>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">

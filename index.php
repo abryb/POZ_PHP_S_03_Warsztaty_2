@@ -85,7 +85,7 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
         $allTweets = tweet::loadAll();
         foreach ($allTweets as $tweet) {
             $user = user::loadById($tweet->getUserId());
-            echo "<a href=sites/tweet.php?id=" . $tweet->getId() . ">";
+            echo "<a href=sites/tweetPost.php?id=" . $tweet->getId() . ">";
             echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
                     " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr id='text'><td colspan='3'>" . 
                     $tweet ->getText() . " </td></tr></table>";    
