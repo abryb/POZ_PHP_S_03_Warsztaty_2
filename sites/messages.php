@@ -24,10 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 // Handling form sending message from President
+$mrPresidentQuots = [
+    'A jak się nie wie, co się buduje, to nawet szałasu nie można rozbierać, bo deszcz na głowę będzie padał.',
+    'Dobrze się stało, że źle się stało.',
+    'Dokonałem zwrotu o 360 stopni.',
+    'Dzięki komputerom uda się nam pogodzić kapitalistyczną skuteczność z dużą ilością wolnego czasu, właściwą dla socjalizmu.',
+    'Gdyby w jeziorze były ryby, wędkowanie nie miałoby sensu.',
+    'Może założę jakiś biznes i będę bogaty.',
+    'Nie mogło być lepiej to chciałem, żeby było śmieszniej.',
+    'Nie można mieć pretensji do Słońca, że kręci się wokół Ziemi.'
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['lech'])) {
         $exampleMessage = new message();
-        $exampleMessage->setText('A jak się nie wie, co się buduje, to nawet szałasu nie można rozbierać, bo deszcz na głowę będzie padał.');
+        $exampleMessage->setText($mrPresidentQuots[mt_rand(0, 7)]);
         $exampleMessage->setReceiverId($client->getId());
         $exampleMessage->setSenderId(42);
         $exampleMessage->save();
@@ -134,4 +145,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 </body>
-</html>
+</html
