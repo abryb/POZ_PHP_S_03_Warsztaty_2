@@ -84,13 +84,15 @@ class message extends activeRecord {
                     echo self::$db->conn->error;
                 }
             } else {
-                $sql = "UPDATE messages SET senderId=:senderId, receiverId=:receiverId, text=:text, creationDate=:creationDate";
+                $sql = "UPDATE messages SET senderId=:senderId, receiverId=:receiverId, text=:text, creationDate=:creationDate, `read`=:read WHERE id = :id";
                 $stmt = self::$db->conn->prepare($sql);
                 $result = $stmt->execute([
+                    'id' => $this->getId(),
                     'senderId' => $this->senderId,
                     'receiverId' => $this->receiverId,
                     'text' => $this->text,
                     'creationDate' => $this->creationDate,
+                    'read' => $this->getRead(),
                 ]);
 
                 if ($result == true) {
@@ -110,10 +112,10 @@ class message extends activeRecord {
         $result = $stmt->execute([ 'id' => $id ]);
         if ($result && $stmt->rowCount() >= 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $loadedMessage = new messages();
+            $loadedMessage = new message();
             $loadedMessage->id = $row['id'];
             $loadedMessage->senderId = $row['senderId'];
-            $loadedMessage->receiverid = $row['receiverid'];
+            $loadedMessage->receiverId = $row['receiverId'];
             $loadedMessage->text = $row['text'];
             $loadedMessage->creationDate = $row['creationDate'];
             $loadedMessage->read = $row['read'];

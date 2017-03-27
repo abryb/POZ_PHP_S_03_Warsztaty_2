@@ -2,8 +2,10 @@
 require_once('../autoloader.php');
 
 session_start();
+
 $userId= null;
 $client=null;
+$clientId=null;
 
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
     $client = user::loadById($_SESSION['id']);
@@ -22,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['message'])) {
          $message = new message();
-         $message->setReceiverId($client->getId());
-         $message->setSenderId($_SESSION['receiverId']);
+         $message->setReceiverId($_SESSION['receiverId']);
+         $message->setSenderId($client->getId());
          $message->setText($_POST['message']);
          $result = $message->save();
          if ($result == true) {
@@ -81,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="col-sm-6 ">
         <?php
+        // Pokazuje wszystkie wiadomości używkownika
         if (!empty($user)) {
             echo "<h3>Użytkownik " . $user->getUsername() . "</h3>";
             $allTweets = tweet::loadAllByUserId($user->getId());
@@ -96,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="col-sm-4">
         <?php 
+        // Jesli zalogowany user nie przegląda siebie to może wysłać wiadomość
         if ($userId != $clientId && $userId != null) { 
         ?>
         <form action="" method="post" role="form" >
