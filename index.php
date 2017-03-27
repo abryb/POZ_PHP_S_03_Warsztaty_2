@@ -5,11 +5,12 @@ session_start();
 
 $client = null;
 
+// Seting client
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
     $client = user::loadById($_SESSION['id']);
 }
 
-//Odbieranie tweetu wysłanego z formularza
+// Reception of tweet form
 if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($_POST['tweet'])) {
@@ -37,23 +38,17 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>                        
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                   
                     </button>
                     <a class="navbar-brand" href="#">Tweeter</a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="sites/profile.php">Profile</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <?php
-                        //Wyświetlanie odpowiednich ikonek w zależności czy user jest zalogowany
+                        // Displaying navbar
                         if (!$client) {
                             ?>
                             <li><a href="sites/login.php"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -72,7 +67,7 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
 
         <div class="container">
             <?php
-            // Wyświetlanie informacji o zalogowaniu
+            // Displays information if viewer is loged in
             if (!$client) {
                 ?>
                 <h1>Nie jesteś zalogowany, zaloguj się lub stwórz konto</h1>
@@ -85,7 +80,7 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
 
         <?php
         if ($client != null ) {
-            // Jeśli user jest zalogowany to wyświetla form do tweeta
+            // If client is loged in, displays tweet form
             ?>
             <div class="container">
                 <div class="row">
@@ -115,7 +110,7 @@ if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
                 </div>
                 <div class="col-sm-6 ">
                     <?php
-                    // Wyświetlenie wszystkich tweetów
+                    // Writes out all tweets
                     $allTweets = tweet::loadAll();
                     foreach ($allTweets as $tweet) {
                         $user = user::loadById($tweet->getUserId());

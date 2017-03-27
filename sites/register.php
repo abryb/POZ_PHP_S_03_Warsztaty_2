@@ -3,12 +3,14 @@ require_once('../autoloader.php');
 
 session_start();
 
-$outcome = '';
+$outcome = ''; // response to registration form
 
+// If user is already loged in, redirects to index.php
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
-    header('Refresh: ; url= prifile.php');
+    header('Refresh: ; url= ../index.php');
 }
 
+// Reception of signup form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['email']) && !empty($_POST['username']) && !empty($_POST['password'])) {
         if (user::loadByEmail($_POST['email'])) {
@@ -47,19 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                  
       </button>
       <a class="navbar-brand" href="../index.php">Tweeter</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
           <li class="active"><a href="profile.php">Profile</a></li>
-        <li><a href="#"></a></li>
-        <li><a href="#"></a></li>
-        <li><a href="#"></a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -89,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn btn-success">REGISTER</button>
         </form>
+        <!--Informations about unsuccesfull regestration--> 
         <?php echo $outcome ?>
     </div>
     <div class="col-sm-4">

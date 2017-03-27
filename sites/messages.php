@@ -6,12 +6,14 @@ session_start();
 $client = false;
 $message = null;
 
+// Setting client
 if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
     $client = user::loadById($_SESSION['id']);
 } else {
     header('Refresh: 0; url= ../index.php');
 }
 
+// Setting of message to show
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET['id'])) {
         $message = message::loadById($_GET['id']);
@@ -21,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 }
 
-//Obsługa wiadomości od prezydenta
+// Handling form sending message from President
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['lech'])) {
         $exampleMessage = new message();
@@ -48,19 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>                        
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                    
                     </button>
                     <a class="navbar-brand" href="../index.php">Tweeter</a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="profile.php">Profile</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($client) { ?>
@@ -75,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
+                    <!--Sending message from mr. President-->
                     <h5>Wyślij sobie wiadomośc od Prezydenta</h5>
                     <form action="" method="post" role="form" >
                         <button type="submit" class="btn btn-success" name="lech">Ślij</button>
@@ -84,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 </div>
                 <?php
+                // Displays all text message
                 if (!empty($_SESSION['messageId']) && !empty($message)) {
                     echo "<h3>" . $message->getText() . "</h3>";
                     $message->setRead(1);
@@ -99,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row">
             <div class="col-sm-5">
                 <?php
+                // Writes out all received messages
                 if ($client) {
                     echo "<h3>Wiadomości odebrane: </h3><br><table>";
                     $allMessages = message::loadAllByUserId($client->getId(), 1);
@@ -118,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-sm-5">
                 <?php
+                // Writes out all send messages
                 if ($client) {
                     echo "<h3>Wiadomości wysłane: </h3><br><table>";
                     $allMessages = message::loadAllByUserId($client->getId());
