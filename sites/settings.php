@@ -4,27 +4,51 @@ require_once('../autoloader.php');
 session_start();
 
 $editToolbar = false;
+$outcome = ''; // Possible informations about wrong input data in form
 
-//Sprawdzenie logowania
+// Setting clieng if exist, if not redirects to index page
 if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
     $client = user::loadById($_SESSION['id']);
 } else {
-//    header('Refresh: 0; url= ../index.php');
-//    exit;
+    header('Refresh: 0; url= ../index.php');
+    exit;
 }
 
-// Prosta zmiana danych
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
-    if (!empty($_POST['email'])) {
-        $client->setEmail($_POST['email']);
-    }
-    if (!empty($_POST['username'])) {
-        $client->setUsername($_POST['username']);
-    }
+// Simple user data change
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($client)) {
+    //If password was send
     if (!empty($_POST['password'])) {
-        $client->setPasswordHash($_POST['password']);
+        //Check if password is correct
+        $passwordVerify = password_verify($_POST['password'], $client->getPasswordHash());
+        if ($passwordVerify === true) {
+            // if it is
+            if ($_POST['delete'] === 'yes') {
+                // and user send delete request, delete user
+                $client->delete();
+                session_destroy();
+                //and redirect to index
+                header('Refresh: 0; url= ../index.php');
+                exit;                
+            }
+            //or change clients email, usename, pasword
+            if (!empty($_POST['email'])) {
+                $client->setEmail($_POST['email']);
+                $outcome .= 'Email został zmieniony,';
+            }
+            if (!empty($_POST['username'])) {
+                $client->setEmail($_POST['username']);
+                $outcome .= 'Nazwa użytkownia została zmieniona,';
+            }
+            if (!empty($_POST['newpassword'])) {
+                $client->setPasswordHash($_POST['newpassword']);
+                $outcome .= 'hasło zostało zmienione,';
+            }
+        }
     }
     $client->save();
+    if ($client->save() == false) {
+        $outcome = "Coś poszło nie tak, nie udało się zmienić danych";
+    }
     $_SESSION['email'] = $client->getEmail();
     $_SESSION['id'] = $client->getId();
     $_SESSION['username'] = $client->getUsername();
@@ -46,19 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>                        
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                      
                     </button>
                     <a class="navbar-brand" href="../index.php">Tweeter</a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="profile.php">Profile</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
+                        <li class="active"><a href="profile.php?id=<?php echo $client->getId() ?>">Profile</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($client) { ?>
@@ -77,9 +95,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
                 </div>
                 <div class="col-sm-6 ">
 
-                    <?php if ($client) {
-                        ?>
-                        <h3>Formularz zmiany danych</h3>
+                    <?php 
+                    echo $outcome;
+                    if (!empty($client)) {
+                    ?>
+                        <!--FORM changing client email, username, password or request to delete an account-->
+                        <h3>Formularz zmiany danych. Potwierdź hasłem. Aby usunąć konto, wpisz swoje hasło wybierz usuń</h3>
                         <form action="" method="post" role="form" >
                             <div class="form-group">
                                 <label for="email">Email:</label>
@@ -88,9 +109,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $client) {
                                 <label for="username">Username:</label>
                                 <input type="text" class="form-control" name="username" id="username"
                                        placeholder="Your username">
+                                <label for="newpassword">New Password:</label>
+                                <input type="password" class="form-control" name="newpassword" id="newpassword"
+                                       placeholder=""> 
                                 <label for="password">Password:</label>
                                 <input type="password" class="form-control" name="password" id="password"
-                                       placeholder="">                    
+                                       placeholder="">
+                                <label for="delete">Czy rezygnujesz z naszej wspaniałej usługi? :</label>
+                                <select id="delete" name="delete">
+                                    <option value="no" defoult>Nie</option>
+                                    <option value="yes">Tak, chce sobie iść</option>
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-success">REGISTER</button>
                         </form>

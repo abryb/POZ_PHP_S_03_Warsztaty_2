@@ -15,7 +15,7 @@ abstract class activeRecord implements activeRecordInterface {
             self::$db = new db();
             self::$db->changeDB('twitter');
         }
-        return true; // Czy to tak ma być, a co jak nieuda się stworzenie obiektu db?
+        return true; //czy tak ma być>
     }
     
     public function save(){}

@@ -70,9 +70,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
             <div class="col-sm-4">
             </div>
             <div class="col-sm-4 ">
+
+                <!--FORM-->
                 <form action="" method="post" role="form">
                     <div class="form-group">
-                        <!--FORM-->
                         <label for="email">Email:</label>
                         <input type="text" class="form-control" name="email" id="email"
                                placeholder="Your email">
@@ -81,9 +82,10 @@ if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
                                placeholder="">                    
                     </div>
                     <button type="submit" class="btn btn-success">LOG IN</button>
-                    <!--FORM END-->
                     <?php echo $outcome ?>
-                </form>        
+                </form>  
+                <!--FORM END-->
+
             </div>
             <div class="col-sm-4">
             </div>

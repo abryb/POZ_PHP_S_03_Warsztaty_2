@@ -2,23 +2,29 @@
 require_once('../autoloader.php');
 
 session_start();
+
 $client = null;
 $tweet = null;
 
-if (!empty($_SESSION['email']) && !empty($_SESSION['id'])) {
+// Setting clieng if exist, if not redirects to index page
+if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
     $client = user::loadById($_SESSION['id']);
+} else {
+    header('Refresh: 0; url= ../index.php');
+    exit;
 }
 
+// Reception of GET. Creates tweet, to show commets related with it
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET)) {
         $tweet = tweet::loadById($_GET['id']);
         if ($tweet) {
-            $_SESSION['tweetPostId'] = $_GET['id']; // jak wyślemy post to nie pójdzie get, więc zapisuje w session
+            $_SESSION['tweetPostId'] = $_GET['id']; 
         }
     }
 }
 
-// Odbiór komentarza
+// Reception of POST form of sending Comment
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_SESSION['tweetPostId'] && $client) {
         $tweet = tweet::loadById($_SESSION['tweetPostId']);
@@ -48,19 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>                        
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">                    
                     </button>
                     <a class="navbar-brand" href="../index.php">Tweeter</a>
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
-                        <li><a href="#"></a></li>
+                        <li class="active"><a href="profile.php?id=<?php echo $client->getId() ?>">Profile</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
@@ -78,30 +78,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="col-sm-6 ">
                     <?php
-                    if ($tweet) {
+                    // Wriets out tweet with ID from GET if it exists
+                    if (!empty($tweet)) {
                         $tweetAuthor = user::loadById($tweet->getUserId());
                         echo "<table><tr><td> " . $tweetAuthor->getUsername() . "</td><td> " . $tweetAuthor->getEmail() .
                         " </td><td> " . $tweet->getCreationDate() .
                         " </td></tr><tr id='text'><td colspan='3'>" . $tweet->getText() . " </td></tr></table>";
-                        ?>
-                        <div>
-                            <h4>Komentarze</h4>
-                            <?php
-                            $allComments = comment::loadAllByPostId($_SESSION['tweetPostId']);
-                            foreach ($allComments as $comment) {
-                                $author = user::loadById($comment->getUserId());
-                                echo "<table class='comments'><tr><td> " . $author->getUsername() . " </td><td> " . $author->getEmail() .
-                                " </td><td> " . $comment->getCreationDate() . " </td></tr><tr><td colspan='3'> " .
-                                $comment->getText() . " </td></tr></table>";
-                            }
+                    ?> 
+                    <div>
+                        <h4>Komentarze</h4>
+                        <!--Writes out all comments related with tweet-->
+                        <?php
+                        $allComments = comment::loadAllByPostId($_SESSION['tweetPostId']);
+                        foreach ($allComments as $comment) {
+                            $author = user::loadById($comment->getUserId());
+                            echo "<table class='comments'><tr><td> " . $author->getUsername() . " </td><td> " . $author->getEmail() .
+                            " </td><td> " . $comment->getCreationDate() . " </td></tr><tr><td colspan='3'> " .
+                            $comment->getText() . " </td></tr></table>";
                         }
-                        ?>
+                    }
+                    ?>
                     </div>
                 </div>
                 <div class="col-sm-4">
+                    <!--Form for loged user (client) to wright a comment-->
                     <?php
-                    if ($client) {
-                        //  Jeśli jest zalogowany client to możliwość napisania komentarza
+                    if ($client) {                    
                     ?>
                         <form action="" method="post" role="form" >
                             <label for="comment">Comment:</label>

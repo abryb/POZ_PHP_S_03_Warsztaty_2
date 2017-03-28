@@ -6,17 +6,20 @@ session_start();
 $client = false;
 $message = null;
 
-// Setting client
+// Setting clieng if exist, if not redirects to index page
 if (isset($_SESSION['id']) && isset($_SESSION['email'])) {
     $client = user::loadById($_SESSION['id']);
 } else {
     header('Refresh: 0; url= ../index.php');
+    exit;
 }
 
 // Setting of message to show
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!empty($_GET['id'])) {
         $message = message::loadById($_GET['id']);
+        $sender = user::loadById($message->getSenderId());
+        $receiver = user::loadById($message->getReceiverId());
         if (!empty($message->getId())) {
             $_SESSION['messageId'] = $message->getId();
         }
@@ -37,10 +40,11 @@ $mrPresidentQuots = [
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['lech'])) {
+        $president = user::loadByUsername('Lech W');
         $exampleMessage = new message();
         $exampleMessage->setText($mrPresidentQuots[mt_rand(0, 7)]);
         $exampleMessage->setReceiverId($client->getId());
-        $exampleMessage->setSenderId(42);
+        $exampleMessage->setSenderId($president->getId());
         $exampleMessage->save();
     }
 }
@@ -67,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="profile.php">Profile</a></li>
+                        <li class="active"><a href="profile.php?id=<?php echo $client->getId() ?>">Profile</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <?php if ($client) { ?>
@@ -83,9 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row">
                 <div class="col-sm-2">
                     <!--Sending message from mr. President-->
-                    <h5>Wyślij sobie wiadomośc od Prezydenta</h5>
+                    <h3>Wyślij sobie wiadomośc od Prezydenta</h3>
                     <form action="" method="post" role="form" >
-                        <button type="submit" class="btn btn-success" name="lech">Ślij</button>
+                        <button type="submit" class="btn btn-success" name="lech" style="width: 100px">Ślij</button>
                     </form>
                 </div>
                 <div class="col-sm-10">
@@ -94,7 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php
                 // Displays all text message
                 if (!empty($_SESSION['messageId']) && !empty($message)) {
-                    echo "<h3>" . $message->getText() . "</h3>";
+                    echo "<h6>From ". $sender->getUsername(). " To : ". $receiver->getUsername()
+                            . "</h6><br><h2>". $message->getText() . "</h2>";
                     $message->setRead(1);
                     $message->save();
                     $_SESSION['messageId'] = null;

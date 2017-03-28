@@ -3,7 +3,7 @@ require_once('../autoloader.php');
 
 session_start();
 
-$outcome = ''; // response to registration form
+$outcome = ''; // response about errors in registration form
 
 // If user is already loged in, redirects to index.php
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
@@ -25,14 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $obj1->setpasswordHash($_POST['password']);
                 $obj1->save();
                 $outcome =  "Rejestracja się powiodła!<br>";
-                header('Refresh: 2; url=login.php');
+                header('Refresh: 0; url=login.php');
             }
         }
     } else {
         $outcome = "Nie podałeś wszystkich informacji";
     }
 }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,12 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-          <li class="active"><a href="profile.php">Profile</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
           <li><a href="register.php"><span class="glyphicon glyphicon-log-in"></span> Register</a></li>
-          <li><a href="logout.php"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
       </ul>
     </div>
   </div>
@@ -71,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="col-sm-4">
     </div>
     <div class="col-sm-4 ">
+        
+        <!--REGISTRATION FORM-->
         <form action="" method="post" role="form" >
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -87,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <!--Informations about unsuccesfull regestration--> 
         <?php echo $outcome ?>
+        
     </div>
     <div class="col-sm-4">
     </div>
