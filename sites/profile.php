@@ -87,16 +87,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php
                 // In case of trying to find user by not-existsing id 
                 echo $outcome;
-                // Writes out all tweets of seleceted user
+                // Writes out all tweets of seleceted user, may be a client
                 if (!empty($user)) {
                     echo "<h3>Użytkownik " . $user->getUsername() . "</h3>";
                     echo "<h3>Email: " . $user->getEmail() . "</h3>";
-                    $allTweets = tweet::loadAllByUserId($user->getId());
+                    $allTweets = tweet::loadAllByUserId($user->getId());                    
                     foreach ($allTweets as $tweet) {
+                        $allComments = comment::loadAllByPostId($tweet->getId());                        
                         echo "<a href=tweet.php?id=" . $tweet->getId() . ">";
                         echo "<table><tr><td> " . $user->getUsername() . " </td><td> " . $user->getEmail() .
                         " </td><td> " . $tweet->getCreationDate() . " </td></tr><tr><td colspan='3'> " .
-                        $tweet->getText() . " </td></tr></table>";
+                        $tweet->getText() . " </td></tr><tr><td> Liczba Komentarzy :". count($allComments) ."</td></tr></table>";
                         echo "</a>";
                     }
                 }
