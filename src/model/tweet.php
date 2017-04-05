@@ -94,7 +94,7 @@ class tweet extends activeRecord {
             $loadedTweet = new tweet ();
             $loadedTweet->id = $row['id'];
             $loadedTweet->userId = $row['userId'];
-            $loadedTweet->text = $row['text'];
+            $loadedTweet->text = htmlspecialchars($row['text']);
             $loadedTweet->creationDate = $row['creationDate'];
             return $loadedTweet;
         }
@@ -111,7 +111,7 @@ class tweet extends activeRecord {
                 $loadedUser = new tweet();
                 $loadedUser->id = $row['id'];
                 $loadedUser->userId = $row['userId'];
-                $loadedUser->text = $row['text'];
+                $loadedUser->text = htmlspecialchars($row['text']);
                 $loadedUser->creationDate = $row['creationDate'];
                 $returnTable[] = $loadedUser;
             }

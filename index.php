@@ -9,6 +9,10 @@ session_start();
 // client = loged in user
 $client = null;
 
+//parse_str(file_get_contents("php://input"), $put_vars);
+//var_dump(file_get_contents("php://input"));
+//var_dump($put_vars);
+
 // Seting client if exist
 if ( isset($_SESSION['id']) && isset($_SESSION['email']) ) {
     $client = user::loadById($_SESSION['id']);
