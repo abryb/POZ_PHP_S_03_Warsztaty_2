@@ -8,3 +8,48 @@ table {
     margin: 10px;    
 }
 
+.tweet {
+    border: 2px solid darkblue;
+    border-radius: 5px;
+    margin: 5px 5px 5px 5px;
+}
+
+.tweet span {
+    display: inline-block;
+    margin-bottom: 2%;
+    margin-top: 1%;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-top: 1%;
+}
+
+.tweet .text {
+    font-size: 16px;
+    color: black;
+    font-weight: 700;
+    padding: 1%;
+}
+
+.tweet .username {
+    float: left;
+    width: 30%;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.tweet .userEmail {
+    width: 35%;
+    font-size: 1.2rem;
+}
+
+.tweet .tweetdate {
+    float: right;
+    width: 35%;
+    font-size: 1.2rem;
+}
+
+.tweetInfo {
+    display: block;
+    margin: 1%;
+    padding: 1%;
+}

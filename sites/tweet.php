@@ -23,25 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 }
-
-// Reception of POST form of sending Comment
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($_SESSION['tweetPostId'] && $client) {
-        $tweet = tweet::loadById($_SESSION['tweetPostId']);
-        if (!empty($_POST['comment'])) {
-            $comment = new comment();
-            $comment->setText($_POST['comment']);
-            $comment->setUserId($_SESSION['id']);
-            $comment->setPostId($_SESSION['tweetPostId']);
-            $comment->save();
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Bootstrap Example</title>
+        <title>Tweeter</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="../css/style.css" type="text/css">
@@ -81,9 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Wriets out tweet with ID from GET if it exists
                     if (!empty($tweet)) {
                         $tweetAuthor = user::loadById($tweet->getUserId());
-                        echo "<table><tr><td> " . $tweetAuthor->getUsername() . "</td><td> " . $tweetAuthor->getEmail() .
-                        " </td><td> " . $tweet->getCreationDate() .
-                        " </td></tr><tr id='text'><td colspan='3'>" . $tweet->getText() . " </td></tr></table>";
+                        echo "<div class='tweet row'><div class='tweetInfo'>" .
+                            "<span class='username'><a href=sites/profile.php?id=".$tweetAuthor->getId().">" . $tweetAuthor->getUsername() . "</a></span><span class='userEmail'>" . $tweetAuthor->getEmail() . "</span><span class='tweetdate'>" . $tweet->getCreationDate() . "</span>" .
+                            "</div><div class='text'><a href='sites/tweet.php?id=" . $tweet->getId() . "'>" . $tweet->getText() . "</a></div></div>";
+                        
                     ?> 
                     <div>
                         <h4>Komentarze</h4>
@@ -105,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php
                     if ($client) {                    
                     ?>
-                        <form action="" method="post" role="form" >
+                    <form action="commentSend.php" method="post" role="form" >
                             <label for="comment">Comment:</label>
                             <input type="text" class="form-control" name="comment" id="comment"
                                    placeholder="Write comment" maxlength="40">                  
